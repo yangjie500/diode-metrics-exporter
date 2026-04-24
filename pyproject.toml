@@ -12,7 +12,9 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 description = "Custom Script for export metrics for custom diode"
-dependencies = [] # Add project dependencies here, e.g. ["click", "numpy"]
+dependencies = [
+    "python-dotenv>=1.2.2",
+] # Add project dependencies here, e.g. ["click", "numpy"]
 dynamic = ["version"]
 license.file = "LICENSE"
 readme = "README.md"
