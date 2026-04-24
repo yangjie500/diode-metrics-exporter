@@ -1,0 +1,17 @@
+# Changes here will be overwritten by Copier
+_commit: 5.0.2
+_src_path: https://github.com/DiamondLightSource/python-copier-template.git
+author_email: xiyangjie@gmail.com
+author_name: Yang Jie
+description: Custom Script for export metrics for custom diode
+distribution_name: diode-metrics-exporter
+docker: true
+docker_debug: true
+docs_type: README
+git_platform: github.com
+github_org: yangjie500
+package_name: diode_metrics_exporter
+pypi: true
+repo_name: diode-metrics-exporter
+strict_typing: true
+type_checker: pyright
