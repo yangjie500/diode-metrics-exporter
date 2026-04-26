@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from diode_metrics_exporter.config import SFTPConfig
 
 
@@ -30,3 +32,27 @@ def test_sftp_config_from_env_file(tmp_path: Path) -> None:
     assert config.remote_dir == "/folder"
     assert config.local_dir == tmp_path / "downloads"
     assert config.poll_interval_seconds == 5
+
+
+def test_sftp_config_missing_required_env_var_raises(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    env_file = tmp_path / ".env"
+    monkeypatch.delenv("SFTP_HOST", raising=False)
+    env_file.write_text(
+        "\n".join(
+            [
+                "SFTP_USERNAME=myuser",
+                "SFTP_PASSWORD=mypassword",
+                "SFTP_PRIVATE_KEY_PATH=/tmp/id_ed25519",
+                "SFTP_REMOTE_DIR=/folder",
+                f"SFTP_LOCAL_DIR={tmp_path / 'downloads'}",
+                "SFTP_POLL_INTERVAL_SECONDS=5",
+            ]
+        )
+    )
+
+    with pytest.raises(
+        ValueError, match="Missing required environment variable: SFTP_HOST"
+    ):
+        SFTPConfig.from_env(env_file)
