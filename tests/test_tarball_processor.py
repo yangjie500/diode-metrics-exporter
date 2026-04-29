@@ -125,10 +125,20 @@ def test_process_downloads_extracts_records_metadata_and_marks_downloaded(
     assert record["tarball_name"] == "report.tar.gz"
     assert record["SIZEOFFILE"] == "12323 KB"
     assert record["TIMESTAMP"] == "20241028T115959"
+
     assert record["SIZE_KB"] == 12323.0
     assert record["SIZE_MB"] == round(12323 / 1024, 2)
     assert record["SIZE_GB"] == round(12323 / 1024 / 1024, 4)
+
+    assert "TIME_TAKEN_SECONDS" in record
+    assert "TIME_TAKEN_MINUTES" in record
+    assert "TIME_TAKEN_HOURS" in record
+
     assert isinstance(record["TIME_TAKEN_SECONDS"], int)
+    assert isinstance(record["TIME_TAKEN_MINUTES"], float)
+    assert isinstance(record["TIME_TAKEN_HOURS"], float)
+
+    assert record["TIME_TAKEN_SECONDS"] >= 0
 
     assert store.already_downloaded(remote_file) is True
 

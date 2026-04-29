@@ -119,6 +119,8 @@ class TarballProcessor:
                 "SIZEOFFILE": size_str,
                 "TIMESTAMP": ts_str,
                 "TIME_TAKEN_SECONDS": int(time_taken_seconds),
+                "TIME_TAKEN_MINUTES": round(time_taken_seconds / 60, 2),
+                "TIME_TAKEN_HOURS": round(time_taken_seconds / 3600, 2),
                 "SIZE_KB": round(size_kb, 2),
                 "SIZE_MB": round(size_mb, 2),
                 "SIZE_GB": round(size_gb, 4),
