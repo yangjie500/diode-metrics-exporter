@@ -2,6 +2,7 @@ import json
 import logging
 import tarfile
 import tempfile
+from datetime import UTC, datetime
 from pathlib import Path
 
 from diode_metrics_exporter.sftp_client import RemoteFile, SFTPClient
@@ -88,10 +89,39 @@ class TarballProcessor:
                     f"METADATA.json missing required keys: {sorted(missing_keys)}"
                 )
 
+            # --- Parse SIZEOFFILE ---
+            # Expect format: "12323 KB"
+            size_str = str(metadata["SIZEOFFILE"])
+            size_value_str, size_unit = size_str.split()
+
+            size_kb = float(size_value_str)
+
+            if size_unit.upper() != "KB":
+                raise ValueError(f"Unsupported SIZEOFFILE unit: {size_unit}")
+
+            size_mb = size_kb / 1024
+            size_gb = size_mb / 1024
+
+            # --- Parse TIMESTAMP ---
+            # Format: 20241028T115959
+            ts_str = str(metadata["TIMESTAMP"])
+
+            try:
+                ts = datetime.strptime(ts_str, "%Y%m%dT%H%M%S").replace(tzinfo=UTC)
+            except ValueError as err:
+                raise ValueError(f"Invalid TIMESTAMP format: {ts_str}") from err
+
+            now = datetime.now(UTC)
+            time_taken_seconds = (now - ts).total_seconds()
+
             record = {
                 "tarball_name": tarball_path.name,
-                "SIZEOFFILE": str(metadata["SIZEOFFILE"]),
-                "TIMESTAMP": str(metadata["TIMESTAMP"]),
+                "SIZEOFFILE": size_str,
+                "TIMESTAMP": ts_str,
+                "TIME_TAKEN_SECONDS": int(time_taken_seconds),
+                "SIZE_KB": round(size_kb, 2),
+                "SIZE_MB": round(size_mb, 2),
+                "SIZE_GB": round(size_gb, 4),
             }
 
             self._metadata_sink.write(record)

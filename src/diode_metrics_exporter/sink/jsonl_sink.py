@@ -1,4 +1,5 @@
 import json
+from collections.abc import Mapping
 from pathlib import Path
 
 from diode_metrics_exporter.sink.sink import MetadataSink
@@ -9,6 +10,6 @@ class JsonlMetadataFileSink(MetadataSink):
         self._output_file = output_file
         self._output_file.parent.mkdir(parents=True, exist_ok=True)
 
-    def write(self, metadata: dict[str, str]) -> None:
+    def write(self, metadata: Mapping[str, object]) -> None:
         with self._output_file.open("a", encoding="utf-8") as file:
             file.write(json.dumps(metadata) + "\n")

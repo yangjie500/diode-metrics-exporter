@@ -1,4 +1,5 @@
 import tarfile
+from collections.abc import Mapping
 from pathlib import Path
 
 import pytest
@@ -27,9 +28,9 @@ class FakeSFTPClient:
 
 class FakeMetadataSink:
     def __init__(self) -> None:
-        self.records: list[dict[str, str]] = []
+        self.records: list[Mapping[str, object]] = []
 
-    def write(self, metadata: dict[str, str]) -> None:
+    def write(self, metadata: Mapping[str, object]) -> None:
         self.records.append(metadata)
 
 
@@ -117,13 +118,17 @@ def test_process_downloads_extracts_records_metadata_and_marks_downloaded(
         )
     ]
 
-    assert sink.records == [
-        {
-            "tarball_name": "report.tar.gz",
-            "SIZEOFFILE": "12323 KB",
-            "TIMESTAMP": "20241028T115959",
-        }
-    ]
+    assert len(sink.records) == 1
+
+    record = sink.records[0]
+
+    assert record["tarball_name"] == "report.tar.gz"
+    assert record["SIZEOFFILE"] == "12323 KB"
+    assert record["TIMESTAMP"] == "20241028T115959"
+    assert record["SIZE_KB"] == 12323.0
+    assert record["SIZE_MB"] == round(12323 / 1024, 2)
+    assert record["SIZE_GB"] == round(12323 / 1024 / 1024, 4)
+    assert isinstance(record["TIME_TAKEN_SECONDS"], int)
 
     assert store.already_downloaded(remote_file) is True
 
