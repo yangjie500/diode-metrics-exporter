@@ -1,7 +1,7 @@
-import logging
 from pathlib import Path
 
 from diode_metrics_exporter.config import SFTPConfig
+from diode_metrics_exporter.log import configure_logging
 from diode_metrics_exporter.processor.healthcheck_processor import (
     HealthcheckMonitor,
     HealthcheckProcessor,
@@ -17,12 +17,9 @@ from diode_metrics_exporter.storage import LocalFileStore
 
 
 def run_app(env_file: Path) -> None:
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(name)s - %(message)s",
-    )
-
     config = SFTPConfig.from_env(env_file)
+
+    configure_logging(config.local_dir / "logs")
 
     sftp_client = ParamikoSFTPClient(
         host=config.host,
