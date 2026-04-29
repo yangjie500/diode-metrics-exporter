@@ -2,22 +2,31 @@
 
 from argparse import ArgumentParser
 from collections.abc import Sequence
+from pathlib import Path
 
 from . import __version__
-
-__all__ = ["main"]
+from .cli import run_app
 
 
 def main(args: Sequence[str] | None = None) -> None:
-    """Argument parser for the CLI."""
     parser = ArgumentParser()
+
     parser.add_argument(
         "-v",
         "--version",
         action="version",
         version=__version__,
     )
-    parser.parse_args(args)
+
+    parser.add_argument(
+        "--env-file",
+        type=Path,
+        default=Path(".env"),
+    )
+
+    parsed = parser.parse_args(args)
+
+    run_app(parsed.env_file)
 
 
 if __name__ == "__main__":
