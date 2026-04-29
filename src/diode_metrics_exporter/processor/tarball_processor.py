@@ -106,7 +106,7 @@ class TarballProcessor:
                 if not self._is_safe_path(extract_dir, target_path):
                     raise ValueError(f"Unsafe path detected in tarball: {member.name}")
 
-            tar.extractall(extract_dir)
+            tar.extractall(extract_dir, filter="data")
 
     def _is_safe_path(self, base_dir: Path, target_path: Path) -> bool:
         base_dir = base_dir.resolve()
