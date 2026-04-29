@@ -1,4 +1,3 @@
-import argparse
 import logging
 from pathlib import Path
 
@@ -17,26 +16,13 @@ from diode_metrics_exporter.sink.sink import CompositeMetadataSink
 from diode_metrics_exporter.storage import LocalFileStore
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Watch an SFTP directory and process incoming files."
-    )
-
-    parser.add_argument(
-        "--env-file",
-        type=Path,
-        default=Path(".env"),
-        help="Path to environment file.",
-    )
-
-    args = parser.parse_args()
-
+def run_app(env_file: Path) -> None:
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s %(levelname)s %(name)s - %(message)s",
     )
 
-    config = SFTPConfig.from_env(args.env_file)
+    config = SFTPConfig.from_env(env_file)
 
     sftp_client = ParamikoSFTPClient(
         host=config.host,
