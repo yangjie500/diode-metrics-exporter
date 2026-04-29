@@ -12,7 +12,7 @@ from diode_metrics_exporter.processor.processor import FileProcessorRouter
 from diode_metrics_exporter.processor.tarball_processor import TarballProcessor
 from diode_metrics_exporter.sftp_client import ParamikoSFTPClient
 from diode_metrics_exporter.sftp_watcher import SFTPWatcher
-from diode_metrics_exporter.sink.json_sink import JsonlMetadataFileSink
+from diode_metrics_exporter.sink.jsonl_sink import JsonlMetadataFileSink
 from diode_metrics_exporter.sink.sink import CompositeMetadataSink
 from diode_metrics_exporter.storage import LocalFileStore
 
